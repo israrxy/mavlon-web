@@ -30,7 +30,7 @@ export function MatrixProvider({ children }: { children: React.ReactNode }) {
                 userId,
                 deviceId,
             });
-            newClient.startClient();
+            newClient.startClient({ initialSyncLimit: 10 });
             setClient(newClient);
         }
     }, []);

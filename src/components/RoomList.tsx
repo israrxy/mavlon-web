@@ -27,25 +27,14 @@ export function RoomList({ onSelectRoom, selectedRoomId }: RoomListProps) {
             setRooms(allRooms);
         };
 
-        // Initial fetch
-        client.on(sdk.ClientEvent.Sync, function(state) {
-            if (state === 'PREPARED') {
-               updateRooms();
-            }
-        });
+        client.on(sdk.ClientEvent.Sync, updateRooms);
+        client.on(sdk.RoomEvent.Timeline, updateRooms);
 
-        client.on(sdk.RoomEvent.Timeline, () => {
-            updateRooms();
-        });
-
-        // if already synced
-        if (client.getSyncState() === 'SYNCING') {
-             updateRooms();
-        }
+        updateRooms();
 
         return () => {
-            client.removeAllListeners(sdk.ClientEvent.Sync);
-            client.removeAllListeners(sdk.RoomEvent.Timeline);
+            client.removeListener(sdk.ClientEvent.Sync, updateRooms);
+            client.removeListener(sdk.RoomEvent.Timeline, updateRooms);
         };
     }, [client]);
 
